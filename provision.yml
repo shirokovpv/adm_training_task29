@@ -1,0 +1,49 @@
+- name: Base set up
+  hosts: all
+  #Выполнять действия от root-пользователя
+  become: yes
+  tasks:
+  #Установка telnet
+  - name: install telnet
+    apt:
+      name:
+        - telnet
+      state: present
+      update_cache: true
+  
+- name: Install nodes
+  hosts: node1,node2
+  #Выполнять действия от root-пользователя
+  become: yes
+  tasks:
+  #Установка ПО
+  - name: install soft
+    apt:
+      name:
+        - postgresql 
+        - postgresql-contrib
+        - barman-cli
+      state: present
+      update_cache: true
+  
+  #Запуск службы postgresql, добавление её в автозагрузку
+  - name: enable postgresql
+    service:
+      name: postgresql
+      state: started
+      enabled: true
+
+- name: Barman set up
+  hosts: barman
+  #Выполнять действия от root-пользователя
+  become: yes
+  tasks:
+  #Установка ПО
+  - name: install soft
+    apt:
+      name:
+        - barman
+        - barman-cli
+        - postgresql
+      state: present
+      update_cache: true
